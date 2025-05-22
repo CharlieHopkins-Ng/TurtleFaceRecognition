@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 
 export default function Results({ results }) {
     if (!results || results.length === 0) {
@@ -10,7 +11,7 @@ export default function Results({ results }) {
             <h2>Results</h2>
             {results.map(match => (
                 <div key={match.id}>
-                    <img src={match.image} alt={`Turtle ${match.id}`} width="100" />
+                    <Image src={match.image} alt={`Turtle ${match.id}`} width={100} height={100} />
                     <p>{match.id}: {Math.round(match.score * 100)}%</p>
                 </div>
             ))}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '../../firebaseConfig';
-import { collection, addDoc, onSnapshot, deleteDoc, deleteField, doc, query, orderBy, updateDoc, setDoc, getDoc, where, getDocs, arrayUnion } from 'firebase/firestore';
+import { collection, onSnapshot, deleteField, doc, query, updateDoc, setDoc, getDoc, where, arrayUnion } from 'firebase/firestore';
 import * as Sentry from '@sentry/react';
 import imageCompression from 'browser-image-compression';
 import { getEmbedding } from '../../utils/embeddings'; // Import the embedding generation function
@@ -11,6 +11,7 @@ import { isAdmin, requestVerification } from '../../src/userManagement'; // Impo
 import { useRouter } from 'next/navigation';
 import '../../styles/styles.css'; // Import the styles.css file
 import NavBar from '../../components/NavBar'; // Import the NavBar component
+import Image from 'next/image'; // Add this import
 
 export default function UploadImages() {
     const [image, setImage] = useState(null);
@@ -218,55 +219,6 @@ export default function UploadImages() {
         }
     };
 
-    const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-    };
-
-    const handleSignOut = async () => {
-        const auth = getAuth();
-        await signOut(auth);
-        alert('You have been signed out.');
-        router.push('/');
-    };
-
-    useEffect(() => {
-        if (!collectionName.trim()) return; // Ensure collectionName is valid
-
-        const collectionRef = collection(db, 'collections');
-        const q = query(collectionRef, where('__name__', '==', collectionName)); // Query for the document with the specified name
-        console.log(`Querying document: collections/${collectionName}`); // Log the document path being queried
-
-        const unsubscribe = onSnapshot(
-            q,
-            (snapshot) => {
-                if (snapshot.empty) {
-                    console.warn(`No document found for collection name: ${collectionName}`);
-                    setImages([]); // Clear images if no document is found
-                    return;
-                }
-
-                const fetchedImages = snapshot.docs.flatMap((doc) => {
-                    const data = doc.data();
-                    return (data.images || []).map((imageData) => ({
-                        id: doc.id, // Use the document ID
-                        ...imageData, // Spread image and embedding data
-                    }));
-                });
-                setImages(fetchedImages);
-            },
-            (error) => {
-                console.error(`Error fetching real-time updates for document "collections/${collectionName}":`, error); // Log detailed error
-                if (error.code === 'permission-denied') {
-                    alert(`You do not have permission to view the collection "${collectionName}".`);
-                } else {
-                    alert('Failed to fetch real-time updates. Check the console for details.');
-                }
-            }
-        );
-
-        return () => unsubscribe();
-    }, [collectionName]);
-
     return (
         <div className={darkMode ? 'dark-mode' : ''}>
             <NavBar />
@@ -350,7 +302,7 @@ export default function UploadImages() {
                             <h2>Uploaded Images</h2>
                             {images.map(image => (
                                 <div key={image.id} className="image-item">
-                                    <img src={image.image} alt={image.id} />
+                                    <Image src={image.image} alt={image.id} width={100} height={100} />
                                     <p>{image.id}</p>
                                     <button
                                         className="delete"

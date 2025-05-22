@@ -4,6 +4,7 @@ import { getAuth, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { isAdmin } from '../src/userManagement'; // Import the isAdmin function
+import Link from 'next/link'; // Add this import
 
 export default function NavBar() {
     const [user, setUser] = useState(null);
@@ -46,15 +47,15 @@ export default function NavBar() {
         }}>
             <h1 style={{ margin: 0 }}>Turtle Face Recognition</h1>
             <div>
-                <a href="/" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Home</a>
-                <a href="/uploadImages" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Upload Images</a>
+                <Link href="/" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Home</Link>
+                <Link href="/uploadImages" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Upload Images</Link>
                 {isUserAdmin && (
-                    <a href="/admin" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Admin</a>
+                    <Link href="/admin" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Admin</Link>
                 )}
                 {!user ? (
                     <>
-                        <a href="/signup" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Sign Up</a>
-                        <a href="/login" style={{ color: 'white', textDecoration: 'none' }}>Log In</a>
+                        <Link href="/signup" style={{ color: 'white', textDecoration: 'none', marginRight: '15px' }}>Sign Up</Link>
+                        <Link href="/login" style={{ color: 'white', textDecoration: 'none' }}>Log In</Link>
                     </>
                 ) : (
                     <button

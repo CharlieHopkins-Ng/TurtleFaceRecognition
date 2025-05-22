@@ -6,7 +6,7 @@ import { collection, getDocs, doc, getDoc, getFirestore } from 'firebase/firesto
 import { db } from '../firebaseConfig'; // Correct import path for db
 import { findBestMatches } from '../utils/similarity';
 import { getAuth, signOut } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Add this import
 import { isAdmin } from '../src/userManagement'; // Import the isAdmin function
 import NavBar from '../components/NavBar'; // Import the NavBar component
 import '../styles/styles.css'; // Import the styles.css file
@@ -18,7 +18,6 @@ export default function Home() {
     const [user, setUser] = useState(null);
     const [isUserAdmin, setIsUserAdmin] = useState(false);
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
 
     useEffect(() => {
         const auth = getAuth();
@@ -102,7 +101,7 @@ export default function Home() {
                     <h2>Top 5 Matches</h2>
                     {results.map((match, index) => (
                         <div key={`${match.id}-${index}`} className="result-item">
-                            <img src={match.image} alt={match.id} />
+                            <Image src={match.image} alt={match.id} width={100} height={100} />
                             <p>{match.id}: {Math.round(match.score * 100)}%</p>
                         </div>
                     ))}

@@ -1,5 +1,5 @@
 import { db } from '../firebaseConfig';
-import { collection, doc, setDoc, getDoc, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, doc, setDoc, getDoc, addDoc } from 'firebase/firestore';
 
 /**
  * Mark a user as an admin.
