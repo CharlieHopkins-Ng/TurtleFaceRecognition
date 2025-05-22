@@ -40,13 +40,13 @@ export default function Home() {
             const imageDocSnap = await getDoc(imageDocRef);
             if (imageDocSnap.exists()) {
                 const data = imageDocSnap.data();
-                for (const [key, value] of Object.entries(data)) {
+                Object.values(data).forEach((value) => {
                     allImages.push({
                         id: turtleId,
                         image: value.image,
                         embedding: value.embedding,
                     });
-                }
+                });
             }
         }
         return allImages;
