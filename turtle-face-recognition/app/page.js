@@ -21,7 +21,6 @@ export default function Home() {
         const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
             if (currentUser) {
                 const adminStatus = await isAdmin(currentUser.uid);
-                setIsUserAdmin(adminStatus);
             }
         });
         return () => unsubscribe();
@@ -78,27 +77,49 @@ export default function Home() {
     return (
         <>
             <NavBar />
-            <main>
-                <div>
-                    <label>
+            <main style={{
+                maxWidth: 700,
+                margin: '40px auto',
+                background: '#fff',
+                borderRadius: '12px',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+                padding: '32px',
+            }}>
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{ fontWeight: 500, marginRight: 12 }}>
                         Collection Name:
                         <input
                             type="text"
                             value={collectionName}
                             onChange={(e) => setCollectionName(e.target.value)}
+                            style={{
+                                marginLeft: 12,
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                border: '1px solid #bbb',
+                                fontSize: '1rem',
+                                marginTop: 4,
+                            }}
                         />
                     </label>
                 </div>
-                <div className="uploader">
+                <div className="uploader" style={{ marginBottom: '32px' }}>
                     <ImageUploader onImageUpload={handleImageUpload} />
-                    {loading && <p>Loading and matching...</p>}
+                    {loading && <p style={{ marginTop: 12 }}>Loading and matching...</p>}
                 </div>
                 <div className="results">
-                    <h2>Top 5 Matches</h2>
+                    <h2 style={{ marginBottom: 16 }}>Top 5 Matches</h2>
                     {results.map((match, index) => (
-                        <div key={`${match.id}-${index}`} className="result-item">
-                            <Image src={match.image} alt={match.id} width={100} height={100} />
-                            <p>{match.id}: {Math.round(match.score * 100)}%</p>
+                        <div key={`${match.id}-${index}`} className="result-item" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 18,
+                            marginBottom: 18,
+                            padding: '12px 0',
+                            borderBottom: '1px solid #eee'
+                        }}>
+                            <Image src={match.image} alt={match.id} width={100} height={100} style={{ borderRadius: 8 }} />
+                            <p style={{ fontSize: '1.1rem', fontWeight: 500 }}>{match.id}: {Math.round(match.score * 100)}%</p>
                         </div>
                     ))}
                     {results.length === 0 && <p>No matches found.</p>}

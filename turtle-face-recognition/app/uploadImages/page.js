@@ -219,100 +219,200 @@ export default function UploadImages() {
     return (
         <div>
             <NavBar />
-            <div>
-                <h1>Upload Images</h1>
+            <div style={{
+                maxWidth: 700,
+                margin: '40px auto',
+                background: '#fff',
+                borderRadius: '12px',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.07)',
+                padding: '32px',
+            }}>
+                <h1 style={{ marginBottom: 24 }}>Upload Images</h1>
                 {!user ? (
                     <p>You must be logged in to upload images.</p>
                 ) : !isVerified && !isUserAdmin ? (
                     <div>
-                        <p>You are not verified to upload images. Apply for verification below:</p>
-                        <div>
+                        <p style={{ marginBottom: 16 }}>You are not verified to upload images. Apply for verification below:</p>
+                        <div style={{ marginBottom: 12 }}>
                             <label>
                                 Collection Name:
                                 <input
                                     type="text"
                                     value={collectionName}
                                     onChange={(e) => setCollectionName(e.target.value)}
+                                    style={{
+                                        marginLeft: 12,
+                                        padding: '8px 12px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #bbb',
+                                        fontSize: '1rem',
+                                        marginTop: 4,
+                                    }}
                                 />
                             </label>
                         </div>
-                        <div>
+                        <div style={{ marginBottom: 12 }}>
                             <label>
                                 Organization Name:
                                 <input
                                     type="text"
                                     value={organizationName}
                                     onChange={(e) => setOrganizationName(e.target.value)}
+                                    style={{
+                                        marginLeft: 12,
+                                        padding: '8px 12px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #bbb',
+                                        fontSize: '1rem',
+                                        marginTop: 4,
+                                    }}
                                 />
                             </label>
                         </div>
-                        <div>
+                        <div style={{ marginBottom: 12 }}>
                             <label>
                                 Organization Email:
                                 <input
                                     type="email"
                                     value={organizationEmail}
                                     onChange={(e) => setOrganizationEmail(e.target.value)}
+                                    style={{
+                                        marginLeft: 12,
+                                        padding: '8px 12px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #bbb',
+                                        fontSize: '1rem',
+                                        marginTop: 4,
+                                    }}
                                 />
                             </label>
                         </div>
-                        <button onClick={handleVerificationRequest}>
+                        <button
+                            onClick={handleVerificationRequest}
+                            style={{
+                                padding: '10px 24px',
+                                backgroundColor: '#1976d2',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                marginTop: 8,
+                            }}
+                        >
                             Apply for Verification
                         </button>
                     </div>
                 ) : (
                     <>
-                        <div>
+                        <div style={{ marginBottom: 12 }}>
                             <label>
                                 Collection Name:
                                 <input
                                     type="text"
                                     value={collectionName}
                                     onChange={(e) => setCollectionName(e.target.value)}
+                                    style={{
+                                        marginLeft: 12,
+                                        padding: '8px 12px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #bbb',
+                                        fontSize: '1rem',
+                                        marginTop: 4,
+                                    }}
                                 />
                             </label>
                         </div>
-                        <div>
+                        <div style={{ marginBottom: 12 }}>
                             <label>
                                 ID:
                                 <input
                                     type="text"
                                     value={id}
                                     onChange={(e) => setId(e.target.value)}
+                                    style={{
+                                        marginLeft: 12,
+                                        padding: '8px 12px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #bbb',
+                                        fontSize: '1rem',
+                                        marginTop: 4,
+                                    }}
                                 />
                             </label>
                         </div>
-                        <div>
+                        <div style={{ marginBottom: 12 }}>
                             <label>
                                 Image:
                                 <input
                                     type="file"
                                     accept="image/*"
                                     onChange={handleImageChange}
+                                    style={{
+                                        marginLeft: 12,
+                                        padding: '8px 12px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #bbb',
+                                        fontSize: '1rem',
+                                        marginTop: 4,
+                                    }}
                                 />
                             </label>
                         </div>
-                        <button onClick={handleUpload} disabled={loading}>
+                        <button
+                            onClick={handleUpload}
+                            disabled={loading}
+                            style={{
+                                padding: '10px 24px',
+                                backgroundColor: '#4caf50',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontWeight: 500,
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                marginBottom: 24,
+                            }}
+                        >
                             {loading ? 'Uploading...' : 'Upload'}
                         </button>
-                        <div className="uploaded-images">
-                            <h2>Uploaded Images</h2>
-                            {images.map(image => (
-                                <div key={image.id} className="image-item">
-                                    <Image src={image.image} alt={image.id} width={100} height={100} />
-                                    <p>{image.id}</p>
-                                    <button
-                                        className="delete"
-                                        onClick={() => handleDelete(image.id)}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            ))}
+                        <div className="uploaded-images" style={{ marginTop: 32 }}>
+                            <h2 style={{ marginBottom: 16 }}>Uploaded Images</h2>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+                                {images.map(image => (
+                                    <div key={image.id} className="image-item" style={{
+                                        background: '#f9f9f9',
+                                        borderRadius: 8,
+                                        padding: 12,
+                                        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        width: 140,
+                                    }}>
+                                        <Image src={image.image} alt={image.id} width={100} height={100} style={{ borderRadius: 6 }} />
+                                        <p style={{ margin: '10px 0 6px 0', fontWeight: 500 }}>{image.id}</p>
+                                        <button
+                                            className="delete"
+                                            onClick={() => handleDelete(image.id)}
+                                            style={{
+                                                padding: '6px 14px',
+                                                backgroundColor: '#d32f2f',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '5px',
+                                                fontWeight: 500,
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </>
                 )}
-                {isUserAdmin && <p>You are an admin.</p>}
+                {isUserAdmin && <p style={{ marginTop: 24, color: '#1976d2', fontWeight: 500 }}>You are an admin.</p>}
             </div>
         </div>
     );
