@@ -5,17 +5,15 @@ import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { approveRequest } from '../../src/userManagement';
 import { getAuth } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
 import NavBar from '../../components/NavBar'; // Import the NavBar component
 
 export default function AdminPage() {
     const [requests, setRequests] = useState([]);
-    const router = useRouter();
 
     useEffect(() => {
         const auth = getAuth();
-        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-            // Remove: setUser(currentUser);
+        const unsubscribe = auth.onAuthStateChanged(() => {
+            // No-op, remove currentUser
         });
         return () => unsubscribe();
     }, []);

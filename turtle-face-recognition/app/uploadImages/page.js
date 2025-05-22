@@ -8,7 +8,6 @@ import imageCompression from 'browser-image-compression';
 import { getEmbedding } from '../../utils/embeddings'; // Import the embedding generation function
 import { getAuth } from 'firebase/auth';
 import { isAdmin, requestVerification } from '../../src/userManagement'; // Import the requestVerification function
-import { useRouter } from 'next/navigation';
 import '../../styles/styles.css'; // Import the styles.css file
 import NavBar from '../../components/NavBar'; // Import the NavBar component
 import Image from 'next/image'; // Add this import
@@ -19,13 +18,11 @@ export default function UploadImages() {
     const [collectionName, setCollectionName] = useState('');
     const [loading, setLoading] = useState(false);
     const [images, setImages] = useState([]);
-    const [darkMode, setDarkMode] = useState(false);
     const [user, setUser] = useState(null);
     const [isUserAdmin, setIsUserAdmin] = useState(false);
     const [isVerified, setIsVerified] = useState(false); // Track if the user is verified
     const [organizationName, setOrganizationName] = useState(''); // Track organization name
     const [organizationEmail, setOrganizationEmail] = useState(''); // Track organization email
-    const router = useRouter();
 
     useEffect(() => {
         const auth = getAuth();
@@ -220,7 +217,7 @@ export default function UploadImages() {
     };
 
     return (
-        <div className={darkMode ? 'dark-mode' : ''}>
+        <div>
             <NavBar />
             <div>
                 <h1>Upload Images</h1>

@@ -96,7 +96,7 @@ export default function Home() {
                 <div className="results">
                     <h2>Top 5 Matches</h2>
                     {results.map((match, index) => (
-                        <div className="result-item">
+                        <div key={`${match.id}-${index}`} className="result-item">
                             <Image src={match.image} alt={match.id} width={100} height={100} />
                             <p>{match.id}: {Math.round(match.score * 100)}%</p>
                         </div>
