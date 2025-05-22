@@ -4,19 +4,18 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { approveRequest } from '../../src/userManagement';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import NavBar from '../../components/NavBar'; // Import the NavBar component
 
 export default function AdminPage() {
     const [requests, setRequests] = useState([]);
-    const [user, setUser] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-            setUser(currentUser);
+            // Remove: setUser(currentUser);
         });
         return () => unsubscribe();
     }, []);
@@ -48,13 +47,6 @@ export default function AdminPage() {
             console.error('Error denying request:', error);
             alert('Failed to deny request. Check the console for details.');
         }
-    };
-
-    const handleSignOut = async () => {
-        const auth = getAuth();
-        await signOut(auth);
-        alert('You have been signed out.');
-        router.push('/');
     };
 
     return (

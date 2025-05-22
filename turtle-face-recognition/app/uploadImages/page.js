@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { db } from '../../firebaseConfig';
-import { collection, onSnapshot, deleteField, doc, query, updateDoc, setDoc, getDoc, where, arrayUnion } from 'firebase/firestore';
+import { onSnapshot, deleteField, doc, updateDoc, setDoc, getDoc, arrayUnion } from 'firebase/firestore';
 import * as Sentry from '@sentry/react';
 import imageCompression from 'browser-image-compression';
 import { getEmbedding } from '../../utils/embeddings'; // Import the embedding generation function
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { isAdmin, requestVerification } from '../../src/userManagement'; // Import the requestVerification function
 import { useRouter } from 'next/navigation';
 import '../../styles/styles.css'; // Import the styles.css file
