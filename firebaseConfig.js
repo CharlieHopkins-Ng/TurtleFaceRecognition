@@ -1,0 +1,1 @@
+// Email/password authentication is already supported by getAuth and createUserWithEmailAndPassword/signInWithEmailAndPassword

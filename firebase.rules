@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Collection-level document (metadata, owner)
+    match /collections/{collectionId} {
+      // Allow verified users to read collections
+      allow read: if request.auth != null 
+                  && exists(/databases/$(database)/documents/users/$(request.auth.uid)) 
+                  && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.verified == true);
+
+      // Allow only the owner to create or update collections
+      allow create: if request.auth != null 
+                    && request.auth.uid == request.resource.data.owner;
+      allow update, delete: if request.auth != null 
+                            && request.auth.uid == resource.data.owner;
+
+      // Explicitly match turtleId documents (these are empty, but needed for structure)
+      match /{turtleId} {
+        allow read, write: if false; // No direct access to turtleId docs
+        // Explicitly match Image document under each turtleId
+        match /Image {
+          // Allow verified users to read images
+          allow read: if request.auth != null 
+                      && exists(/databases/$(database)/documents/users/$(request.auth.uid)) 
+                      && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.verified == true);
+
+          // Allow only the owner to write/delete images
+          allow create, update, delete: if request.auth != null
+                                        && exists(/databases/$(database)/documents/collections/$(collectionId))
+                                        && get(/databases/$(database)/documents/collections/$(collectionId)).data.owner == request.auth.uid;
+        }
+        // Add similar blocks for other subcollections/documents if needed (e.g., Embedding)
+      }
+    }
+
+    // Rules for verification requests
+    match /requests/{requestId} {
+      // Allow authenticated users to create and read requests
+      allow read, write: if request.auth != null;
+    }
+
+    // Rules for user documents
+    match /users/{uid} {
+      // Allow users to read and write their own user document
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
