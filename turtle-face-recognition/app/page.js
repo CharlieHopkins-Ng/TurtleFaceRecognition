@@ -15,12 +15,13 @@ export default function Home() {
     const [collectionName, setCollectionName] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
             if (currentUser) {
-                const adminStatus = await isAdmin(currentUser.uid);
+                await isAdmin(currentUser.uid);
             }
         });
         return () => unsubscribe();
@@ -58,15 +59,20 @@ export default function Home() {
             return;
         }
         setLoading(true);
+        setProgress(10); // Start progress
         try {
             // Fetch all images for all turtles in the collection
+            setProgress(30);
             const allImages = await fetchAllTurtleImages(collectionName);
-            setDatabase(allImages);
 
+            setProgress(60);
             // Find top 5 matches
             const matches = findBestMatches(embedding, allImages, 5);
+            setProgress(100);
             setResults(matches);
+            setTimeout(() => setProgress(0), 500); // Reset after short delay
         } catch (error) {
+            setProgress(0);
             console.error('Error finding matches:', error);
             alert('Failed to find matches. Check the console for details.');
         } finally {
@@ -105,7 +111,28 @@ export default function Home() {
                 </div>
                 <div className="uploader" style={{ marginBottom: '32px' }}>
                     <ImageUploader onImageUpload={handleImageUpload} />
-                    {loading && <p style={{ marginTop: 12 }}>Loading and matching...</p>}
+                    {loading && (
+                        <div style={{ marginTop: 12, marginBottom: 12 }}>
+                            <div style={{
+                                width: '100%',
+                                height: 12,
+                                background: '#eee',
+                                borderRadius: 6,
+                                overflow: 'hidden',
+                                marginTop: 8
+                            }}>
+                                <div style={{
+                                    width: `${progress}%`,
+                                    height: '100%',
+                                    background: '#1976d2',
+                                    transition: 'width 0.2s'
+                                }} />
+                            </div>
+                            <div style={{ fontSize: 12, marginTop: 4, color: '#1976d2' }}>
+                                {progress}% complete
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className="results">
                     <h2 style={{ marginBottom: 16 }}>Top 5 Matches</h2>
@@ -118,7 +145,13 @@ export default function Home() {
                             padding: '12px 0',
                             borderBottom: '1px solid #eee'
                         }}>
-                            <Image src={match.image} alt={match.id} width={100} height={100} style={{ borderRadius: 8 }} />
+                            <Image
+                                src={match.image}
+                                alt={match.id}
+                                width={100}
+                                height={100}
+                                style={{ borderRadius: 8, height: "auto" }}
+                            />
                             <p style={{ fontSize: '1.1rem', fontWeight: 500 }}>{match.id}: {Math.round(match.score * 100)}%</p>
                         </div>
                     ))}

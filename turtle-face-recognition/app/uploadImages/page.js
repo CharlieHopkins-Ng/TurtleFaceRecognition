@@ -10,7 +10,7 @@ import { getAuth } from 'firebase/auth';
 import { isAdmin, requestVerification } from '../../src/userManagement'; // Import the requestVerification function
 import '../../styles/styles.css'; // Import the styles.css file
 import NavBar from '../../components/NavBar'; // Import the NavBar component
-import Image from 'next/image'; // Add this import
+import Image from 'next/image'; // Keep this import for rendering images
 
 export default function UploadImages() {
     const [image, setImage] = useState(null);
@@ -23,6 +23,7 @@ export default function UploadImages() {
     const [isVerified, setIsVerified] = useState(false); // Track if the user is verified
     const [organizationName, setOrganizationName] = useState(''); // Track organization name
     const [organizationEmail, setOrganizationEmail] = useState(''); // Track organization email
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     useEffect(() => {
         const auth = getAuth();
@@ -73,6 +74,7 @@ export default function UploadImages() {
 
         try {
             setLoading(true);
+            setUploadProgress(10); // Start progress
 
             // Check if the user owns the collection
             const collectionRef = doc(db, 'collections', collectionName);
@@ -97,24 +99,31 @@ export default function UploadImages() {
             }
 
             // Compress the image before uploading
+            setUploadProgress(20);
             const compressedImage = await imageCompression(image, {
                 maxSizeMB: 0.5,
                 maxWidthOrHeight: 1920,
                 useWebWorker: true,
+                onProgress: (progress) => setUploadProgress(20 + Math.round(progress * 0.5)), // 20-70%
             });
+            setUploadProgress(70);
 
             const reader = new FileReader();
             reader.onload = async () => {
                 const base64Image = reader.result;
 
-                // Generate embedding for the image
-                const img = new Image();
+                // Use the browser's global Image constructor, not next/image
+                setUploadProgress(80);
+                const img = new window.Image();
                 img.src = base64Image;
                 await new Promise((resolve, reject) => {
                     img.onload = resolve;
                     img.onerror = reject;
                 });
+                setUploadProgress(85);
+
                 const embedding = await getEmbedding(img);
+                setUploadProgress(90);
 
                 // Get the Image document reference
                 const imageDocRef = doc(db, 'collections', collectionName, id, 'Image');
@@ -137,13 +146,17 @@ export default function UploadImages() {
 
                 await setDoc(imageDocRef, newData);
 
+                setUploadProgress(100);
                 alert('Image and embedding uploaded successfully!');
                 setImage(null);
-                setId('');
-                setCollectionName('');
+                // Do not reset id or collectionName
+                // setId('');
+                // setCollectionName('');
+                setTimeout(() => setUploadProgress(0), 500); // Reset after short delay
             };
             reader.readAsDataURL(compressedImage);
         } catch (error) {
+            setUploadProgress(0);
             console.error('Error uploading image:', error);
             Sentry.captureException(error);
             alert('Failed to upload image. Check the console for details.');
@@ -375,6 +388,28 @@ export default function UploadImages() {
                         >
                             {loading ? 'Uploading...' : 'Upload'}
                         </button>
+                        {loading && (
+                            <div style={{ marginBottom: 24 }}>
+                                <div style={{
+                                    width: '100%',
+                                    height: 12,
+                                    background: '#eee',
+                                    borderRadius: 6,
+                                    overflow: 'hidden',
+                                    marginTop: 8
+                                }}>
+                                    <div style={{
+                                        width: `${uploadProgress}%`,
+                                        height: '100%',
+                                        background: '#1976d2',
+                                        transition: 'width 0.2s'
+                                    }} />
+                                </div>
+                                <div style={{ fontSize: 12, marginTop: 4, color: '#1976d2' }}>
+                                    {uploadProgress}% complete
+                                </div>
+                            </div>
+                        )}
                         <div className="uploaded-images" style={{ marginTop: 32 }}>
                             <h2 style={{ marginBottom: 16 }}>Uploaded Images</h2>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
@@ -389,7 +424,13 @@ export default function UploadImages() {
                                         alignItems: 'center',
                                         width: 140,
                                     }}>
-                                        <Image src={image.image} alt={image.id} width={100} height={100} style={{ borderRadius: 6 }} />
+                                        <Image
+                                            src={image.image}
+                                            alt={image.id}
+                                            width={100}
+                                            height={100}
+                                            style={{ borderRadius: 6, height: "auto" }}
+                                        />
                                         <p style={{ margin: '10px 0 6px 0', fontWeight: 500 }}>{image.id}</p>
                                         <button
                                             className="delete"
